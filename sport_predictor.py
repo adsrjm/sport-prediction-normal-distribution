@@ -66,11 +66,17 @@ try:
 
     # 📦 Probabilité que le score soit dans un intervalle
     st.subheader("📦 Probabilité dans un intervalle")
-    a, b = st.slider("Sélectionnez un intervalle", 0.0, float(max_limit), (float(max(0, mu - sigma)), float(mu + sigma)))
+    a, b = st.slider(
+        "Sélectionnez un intervalle",
+        0.0, float(max_limit),
+        (float(max(0, mu - sigma)), float(mu + sigma)),
+        step=0.5
+    )
 
     # Calculer la probabilité cumulée entre a et b
     prob_interval = norm.cdf(b, mu, sigma) - norm.cdf(a, mu, sigma)
-    st.write(f"📦 Probabilité que le score soit entre {a:.2f} et {b:.2f} : {prob_interval:.2%}")
+    st.write(f"📦 Probabilité que le score soit entre {a:.1f} et {b:.1f} : **{prob_interval:.2%}**")
+
 
 except Exception as e:
     st.error("⚠️ Erreur : " + str(e))
