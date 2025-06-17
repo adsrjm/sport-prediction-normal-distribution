@@ -1,23 +1,9 @@
 # ⚽ Prédiction de Score Sportif avec la Loi Normale
 
-Bienvenue dans ce projet de prédiction du score d'une équipe sportive, basé sur **les performances passées** et modélisé à l’aide de la **loi de probabilité normale (ou loi de Gauss)**.
-
-🔗 **Lien vers l’application en ligne :**
-👉 [https://sport-prediction.streamlit.app](https://sport-prediction.streamlit.app)
+### Bienvenue dans ce projet de prédiction du score d'une équipe sportive, basé sur **les performances passées** et modélisé à l’aide de la **loi de probabilité normale (ou loi de Gauss)**.
 
 ---
-
-## 📷 Aperçu de l’application
-
-> ⚠️ Ajoutez vos propres captures d’écran dans le dossier `/assets` et liez-les ici.
-
-| Simulation des scores futurs | Estimation d’un score donné | Intervalle de probabilité      |
-| ---------------------------- | --------------------------- | ------------------------------ |
-| ![Simul](assets/sim1.png)    | ![Score](assets/score1.png) | ![Intervalle](assets/int1.png) |
-
----
-
-## 🧑‍🏫 À destination des débutants : Comprendre la loi normale
+# 🧑‍🏫 Comprendre la loi normale
 
 ### 🔍 Qu’est-ce que la **loi normale** ?
 
@@ -31,7 +17,21 @@ La loi normale est une **courbe en cloche** qu'on utilise pour représenter les 
   * Un petit σ = l’équipe est régulière.
   * Un grand σ = les scores varient beaucoup.
 
-### 🧠 Ce que fait l’application
+---
+
+# 💡 Exemple d’utilisation
+
+1. Rendez-vous sur [🔗 l’application en ligne](https://sport-prediction.streamlit.app)
+2. Saisissez les scores d’une équipe dans le champ prévu (exemple : `2,1,3,2,4,2`)
+3. Observez :
+   * Le score moyen et la variabilité
+   * Un histogramme des scores simulés
+   * La probabilité qu’un score atteigne une valeur précise
+   * La probabilité qu’il soit compris dans une plage
+
+---
+
+# 🧠 Ce que fait l’application
 
 * Vous entrez les scores passés d’une équipe (ex. 1, 2, 2, 3, 3, 2).
 * L’application calcule :
@@ -45,20 +45,20 @@ La loi normale est une **courbe en cloche** qu'on utilise pour représenter les 
   * La **probabilité** qu’il soit compris dans une **plage donnée** (ex. entre 1 et 3)
 
 ---
+# 🔍 Aperçu 
 
-## 💡 Exemple d’utilisation
+### 1. Simulation de scores
+![Simulation](assets/sim1.png)
 
-1. Rendez-vous sur [l’application Streamlit](https://sport-prediction.streamlit.app)
-2. Saisissez les scores d’une équipe dans le champ prévu (exemple : `2,1,3,2,4,2`)
-3. Observez :
 
-   * Le score moyen et la variabilité
-   * Un histogramme des scores simulés
-   * La probabilité qu’un score atteigne une valeur précise
-   * La probabilité qu’il soit compris dans une plage
+### 2. Probabilité d’un score cible (ex: 2.5)
+![Score cible](assets/score1.png)
+
+
+### 3. Probabilité dans un intervalle de score (ex: [2, 8])
+![Intervalle](assets/int1.png)
 
 ---
-
 ## 🛠️ Technologies utilisées
 
 | Outil / Librairie | Rôle dans le projet                        |
@@ -104,20 +104,6 @@ Pour déployer la vôtre :
 2. Connectez votre repo GitHub.
 3. Sélectionnez `sport_predictor.py` comme fichier principal.
 4. L’application sera disponible à une URL du type `https://your-app.streamlit.app`.
-
----
-
-## 📂 Structure du projet
-
-```
-📁 sport-prediction-normal-distribution/
-│
-├— sport_predictor.py        # Application Streamlit
-├— requirements.txt          # Bibliothèques Python nécessaires
-├— .streamlit/config.toml    # Config déploiement Streamlit
-└— README.md                 # Ce fichier
-    └— assets/                # Dossier des captures à afficher
-```
 
 ---
 
