@@ -55,10 +55,11 @@ try:
 
     # 🎯 Probabilité pour un score précis
     st.subheader("🎯 Probabilité pour un score donné")
-    # Définir la limite max du slider selon les données + marge
+    # Définir la limite max selon les données ou les simulations
     max_score = max(max(scores), max(simulated))
-    max_limit = max(5, int(max_score) + 2)
-    x = st.slider("Choisissez un score", 0.0, float(max_limit), float(mu))
+    max_limit = max(5, np.ceil(max_score * 2) / 2)  # Arrondir au 0.5 supérieur
+    
+    x = st.slider("Choisissez un score", 0.0, float(max_limit), float(mu), step=0.5)
 
     # Calculer la densité de probabilité (pdf)
     prob_density = norm.pdf(x, mu, sigma)
@@ -66,17 +67,28 @@ try:
 
     # 📦 Probabilité que le score soit dans un intervalle
     st.subheader("📦 Probabilité dans un intervalle")
+    
+    # Calculer les valeurs min et max pour l'intervalle
+    min_val = max(0.0, np.floor((mu - 3*sigma) * 2) / 2)  # Arrondir au 0.5 inférieur
+    max_val = np.ceil((mu + 3*sigma) * 2) / 2             # Arrondir au 0.5 supérieur
+    max_limit_interval = max(max_score, max_val)
+    max_limit_interval = np.ceil(max_limit_interval * 2) / 2  # Arrondir au 0.5 supérieur
+    
+    # Définir les valeurs par défaut de l'intervalle
+    default_low = max(0.0, np.floor((mu - sigma) * 2) / 2)
+    default_high = np.ceil((mu + sigma) * 2) / 2
+    
     a, b = st.slider(
         "Sélectionnez un intervalle",
-        0.0, float(max_limit),
-        (float(max(0, mu - sigma)), float(mu + sigma)),
+        min_value=0.0, 
+        max_value=float(max_limit_interval),
+        value=(float(default_low), float(default_high)),
         step=0.5
     )
 
     # Calculer la probabilité cumulée entre a et b
     prob_interval = norm.cdf(b, mu, sigma) - norm.cdf(a, mu, sigma)
     st.write(f"📦 Probabilité que le score soit entre {a:.1f} et {b:.1f} : **{prob_interval:.2%}**")
-
 
 except Exception as e:
     st.error("⚠️ Erreur : " + str(e))
