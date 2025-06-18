@@ -114,9 +114,9 @@ Pour déployer la vôtre :
 
 ## 📧 Contact
 
-Projet réalisé par : **[Andi]** et **[Rijamampianina]**
+Projet réalisé par : **[Andy]** et **[Rijamampianina]**
 
-📩 Contact : \[[Andi](mailto:andi@gmail.com)]
+📩 Contact : \[[andyranaivo861@gmail.com](mailto:andyranaivo861@gmail.com)]
 📩 Contact : \[[rijamampianina@gmail.com](mailto:rijamampianina@gmail.com)]
 
 ---
