@@ -29,6 +29,7 @@ scores_str = st.text_input("Scores séparés par des virgules", "1,2,2,3,3")
 try:
     # 🔢 Transformer la chaîne en liste de nombres
     scores = [float(s) for s in scores_str.split(",")]
+    scores = [s for s in scores if s >= 0]  # Exclure les scores négatifs
 
     # 📊 Calcul de la moyenne (mu) et écart-type (sigma)
     mu = np.mean(scores)
@@ -41,79 +42,82 @@ try:
     st.write(f"- Moyenne (μ) = {mu:.2f}  👉 Score moyen")
     st.write(f"- Écart-type (σ) = {sigma:.2f}  👉 Variabilité des scores")
 
-    # 🎲 Simuler 1000 scores selon la loi normale
+    # 🎲 Simuler 1000 scores selon la loi normale, arrondis à des entiers ≥ 0
     st.subheader("🎲 Simulation des scores futurs")
     simulated = np.random.normal(mu, sigma, 1000)
+    simulated = np.round(simulated).astype(int)
+    simulated = simulated[simulated >= 0]
 
-    # 📈 Afficher un histogramme simple
+    # 📈 Afficher un histogramme discret + la courbe de Gauss
     fig, ax = plt.subplots()
-    ax.hist(simulated, bins=10, color='lightgreen', edgecolor='black')
-    ax.set_xlabel("Score simulé")
-    ax.set_ylabel("Fréquence")
-    ax.set_title("Histogramme des scores simulés")
+
+    # Histogramme des scores simulés
+    bins = np.arange(min(simulated), max(simulated) + 2) - 0.5
+    counts, _, _ = ax.hist(simulated, bins=bins, color='lightgreen', edgecolor='black', density=True, label="Scores simulés")
+    ax.set_xticks(np.arange(min(simulated), max(simulated)+1))
+
+    # Courbe de la loi normale de Gauss (continue)
+    x_vals = np.linspace(min(simulated) - 1, max(simulated) + 1, 300)
+    pdf_vals = norm.pdf(x_vals, mu, sigma)
+    ax.plot(x_vals, pdf_vals, color='orange', lw=2, label="Loi normale de Gauss")
+
+    ax.set_xlabel("Score")
+    ax.set_ylabel("Densité")
+    ax.set_title("Distribution des scores vs loi normale")
+    ax.legend()
     st.pyplot(fig)
 
-    # 🎯 Probabilité pour un score précis
+    # 🎯 Probabilité pour un score entier donné
     st.subheader("🎯 Probabilité pour un score donné")
     
-    # Définir la limite max selon les données ou les simulations
     max_score = max(max(scores), max(simulated))
-    max_limit = max(5, np.ceil(max_score * 2) / 2)  # Arrondir au 0.5 supérieur
-    
-    # Initialiser la variable dans session_state si elle n'existe pas
+    max_limit = int(np.ceil(max_score + 3))  # Pour slider
+
+    # Initialiser score sélectionné
     if 'selected_score' not in st.session_state:
-        st.session_state.selected_score = float(round(mu * 2) / 2)  # Arrondir mu au 0.5 le plus proche
-    
-    # Créer le slider en utilisant la valeur stockée
+        st.session_state.selected_score = int(round(mu))
+
     x = st.slider(
-        "Choisissez un score", 
-        0.0, 
-        float(max_limit), 
+        "Choisissez un score entier",
+        min_value=0,
+        max_value=int(max_limit),
         value=st.session_state.selected_score,
-        step=0.5,
+        step=1,
         key='score_slider'
     )
-    
-    # Mettre à jour la valeur stockée
     st.session_state.selected_score = x
 
-    # Calculer la densité de probabilité (pdf)
-    prob_density = norm.pdf(x, mu, sigma)
-    st.write(f"📍 Densité de probabilité pour le score {x:.2f} : {prob_density:.4f}")
+    # 🔍 Probabilité discrète via la loi normale : P(x-0.5 < X < x+0.5)
+    prob_discrete = norm.cdf(x + 0.5, mu, sigma) - norm.cdf(x - 0.5, mu, sigma)
+    st.write(f"📍 Probabilité que le score soit **exactement {x}** : **{prob_discrete:.2%}**")
 
-    # 📦 Probabilité que le score soit dans un intervalle
+    # 📦 Probabilité que le score soit dans un intervalle [a, b]
     st.subheader("📦 Probabilité dans un intervalle")
-    
-    # Calculer les valeurs min et max pour l'intervalle
-    min_val = max(0.0, np.floor((mu - 3*sigma) * 2) / 2)
-    max_val = np.ceil((mu + 3*sigma) * 2) / 2
-    max_limit_interval = max(max_score, max_val)
-    max_limit_interval = np.ceil(max_limit_interval * 2) / 2
-    
-    # Définir les valeurs par défaut de l'intervalle (arrondies à 0.5 près)
-    default_low = max(0.0, np.floor((mu - sigma) * 2) / 2)
-    default_high = np.ceil((mu + sigma) * 2) / 2
-    
-    # Initialiser les variables dans session_state si elles n'existent pas
+
+    default_low = int(np.floor(mu - sigma))
+    default_high = int(np.ceil(mu + sigma))
+    default_low = max(0, default_low)
+
     if 'interval_values' not in st.session_state:
-        st.session_state.interval_values = (float(default_low), float(default_high))
-    
-    # Créer le slider en utilisant les valeurs stockées
+        st.session_state.interval_values = (default_low, default_high)
+
     a, b = st.slider(
-        "Sélectionnez un intervalle",
-        min_value=0.0, 
-        max_value=float(max_limit_interval),
+        "Sélectionnez un intervalle entier",
+        min_value=0,
+        max_value=int(max_limit),
         value=st.session_state.interval_values,
-        step=0.5,
+        step=1,
         key='interval_slider'
     )
-    
-    # Mettre à jour les valeurs stockées
     st.session_state.interval_values = (a, b)
 
-    # Calculer la probabilité cumulée entre a et b
-    prob_interval = norm.cdf(b, mu, sigma) - norm.cdf(a, mu, sigma)
-    st.write(f"📦 Probabilité que le score soit entre {a:.1f} et {b:.1f} : **{prob_interval:.2%}**")
+    if a > b:
+        a, b = b, a
+
+    # Calcul de la somme des probabilités discrètes entre a et b
+    scores_range = np.arange(a, b + 1)
+    probs = [norm.cdf(k + 0.5, mu, sigma) - norm.cdf(k - 0.5, mu, sigma) for k in scores_range]
+    st.write(f"📦 Probabilité que le score soit entre {a} et {b} : **{sum(probs):.2%}**")
 
 except Exception as e:
     st.error("⚠️ Erreur : " + str(e))
