@@ -8,7 +8,8 @@ st.title("⚽ Prédiction de Score Sportif par la Loi Normale")
 st.markdown("Entrez les scores passés (séparés par des virgules) et validez avec Entrée.")
 st.divider()
 
-scores_str = st.text_input("### 📥 Scores (ex: 1,2,2,3)", "1,2,2,3")
+st.markdown("### 📥 Scores (ex: 1,2,2,3)")
+scores_str = st.text_input("", "1,2,2,3")
 
 try:
     scores = [float(s) for s in scores_str.split(",") if float(s) >= 0]
@@ -37,8 +38,9 @@ try:
         st.session_state.score_input = int(round(mu))
         st.session_state.last_scores_str = scores_str
 
+    st.markdown("### 🎯 Score à estimer")
     score_input = st.slider(
-        "🎯 Score à estimer",
+        " ",
         min_value=0,
         max_value=max_score,
         value=st.session_state.score_input,
