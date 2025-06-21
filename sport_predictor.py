@@ -18,6 +18,14 @@ try:
     st.markdown(f"### 📌 Moyenne μ = {mu:.2f}")
     st.markdown(f"### 📌 Écart-type σ = {sigma:.2f}")
 
+    # Gestion du cas sigma = 0 (tous scores identiques)
+    if sigma == 0:
+        def prob_score(k):
+            return 1.0 if k == int(round(mu)) else 0.0
+    else:
+        def prob_score(k):
+            return norm.cdf(k + 0.5, mu, sigma) - norm.cdf(k - 0.5, mu, sigma)
+
     sim = np.round(np.random.normal(mu, sigma, 1000)).astype(int)
     sim = sim[sim >= 0]
 
@@ -48,7 +56,7 @@ try:
     )
     st.session_state.score_input = score_input
 
-    p_x = norm.cdf(score_input + 0.5, mu, sigma) - norm.cdf(score_input - 0.5, mu, sigma)
+    p_x = prob_score(score_input)
     st.markdown(f"""
         <div style="padding: 1rem; background-color: #e6f7ff; border-left: 6px solid #1890ff;">
             <h3 style="margin: 0; font-size: 1.5rem;">📍 P(score = {score_input}) ≈ <strong>{p_x:.2%}</strong></h3>
