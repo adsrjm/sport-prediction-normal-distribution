@@ -14,6 +14,15 @@ st.divider()
 st.markdown("### 📥 Scores (ex: 1,2,2,3)")
 scores_str = st.text_input("", "1,2,2,3")
 
+# 🔁 Réinitialisation si les scores changent
+if 'last_scores_str' not in st.session_state:
+    st.session_state.last_scores_str = scores_str
+
+if scores_str != st.session_state.last_scores_str:
+    st.session_state.score_input = None
+    st.session_state.interval_ab = None
+    st.session_state.last_scores_str = scores_str
+
 try:
     scores = [float(s) for s in scores_str.split(",") if float(s) >= 0]
     mu, sigma = np.mean(scores), np.std(scores)
@@ -35,19 +44,19 @@ try:
     ax.set_xlabel("Score"); ax.set_ylabel("Densité"); ax.legend()
     st.pyplot(fig)
 
-    # 🧠 Initialisation indépendante via session_state
-    if 'score_input' not in st.session_state:
+    # Initialisation indépendante
+    if st.session_state.score_input is None:
         st.session_state.score_input = int(round(mu))
-    if 'interval_ab' not in st.session_state:
+    if st.session_state.interval_ab is None:
         st.session_state.interval_ab = (max(0, int(round(mu) - 1)), int(round(mu) + 1))
 
     # 🎯 Score à estimer
     st.markdown("### 🎯 Score à estimer")
     score_input = st.slider(
-        " ", 
-        min_value=0, 
-        max_value=int(max(sim)+3), 
-        value=st.session_state.score_input, 
+        " ",
+        min_value=0,
+        max_value=int(max(sim) + 3),
+        value=st.session_state.score_input,
         key="score_slider"
     )
     st.session_state.score_input = score_input
@@ -58,17 +67,17 @@ try:
     # 📦 Intervalle [a, b]
     st.markdown("### 📦 Intervalle [a, b]")
     a, b = st.slider(
-        " ", 
-        min_value=0, 
-        max_value=int(max(sim)+3), 
-        value=st.session_state.interval_ab, 
+        " ",
+        min_value=0,
+        max_value=int(max(sim) + 3),
+        value=st.session_state.interval_ab,
         key="interval_slider"
     )
     if a > b:
         a, b = b, a
     st.session_state.interval_ab = (a, b)
 
-    proba = sum(norm.cdf(k+0.5, mu, sigma) - norm.cdf(k-0.5, mu, sigma) for k in range(a, b+1))
+    proba = sum(norm.cdf(k + 0.5, mu, sigma) - norm.cdf(k - 0.5, mu, sigma) for k in range(a, b + 1))
 
     # ✅ Résultat mis en évidence
     st.markdown(f"""
