@@ -43,4 +43,3 @@ try:
 
 except Exception as e:
     st.error("⚠️ Erreur : " + str(e))
-git 
