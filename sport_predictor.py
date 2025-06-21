@@ -7,7 +7,7 @@ from scipy.stats import norm
 st.set_page_config(page_title="Prédiction de Score Sportif", layout="centered")
 st.title("⚽ Prédiction de Score Sportif par la Loi Normale")
 st.markdown("Entrez les scores passés pour estimer un futur score par la loi normale de Gauss.")
-st.markdown("(Séparé par des virgules et valider par Entrée).")
+st.markdown("(Séparés par des virgules et validez avec Entrée.)")
 st.divider()
 
 # 📊 Entrée utilisateur
@@ -35,24 +35,45 @@ try:
     ax.set_xlabel("Score"); ax.set_ylabel("Densité"); ax.legend()
     st.pyplot(fig)
 
-    # 🎯 Score à estimer (indépendant de l’intervalle)
+    # 🧠 Initialisation indépendante via session_state
+    if 'score_input' not in st.session_state:
+        st.session_state.score_input = int(round(mu))
+    if 'interval_ab' not in st.session_state:
+        st.session_state.interval_ab = (max(0, int(round(mu) - 1)), int(round(mu) + 1))
+
+    # 🎯 Score à estimer
     st.markdown("### 🎯 Score à estimer")
-    score_input = st.slider(" ", 0, int(max(sim)+3), int(round(mu)))
-    p_x = norm.cdf(score_input+0.5, mu, sigma) - norm.cdf(score_input-0.5, mu, sigma)
+    score_input = st.slider(
+        " ", 
+        min_value=0, 
+        max_value=int(max(sim)+3), 
+        value=st.session_state.score_input, 
+        key="score_slider"
+    )
+    st.session_state.score_input = score_input
+
+    p_x = norm.cdf(score_input + 0.5, mu, sigma) - norm.cdf(score_input - 0.5, mu, sigma)
     st.markdown(f"### 📍 P(score = {score_input}) ≈ **{p_x:.2%}**")
 
-    # 📦 Intervalle (indépendant)
+    # 📦 Intervalle [a, b]
     st.markdown("### 📦 Intervalle [a, b]")
-    a, b = st.slider(" ", 0, int(max(sim)+3), (max(0, score_input-1), score_input+1))
-    if a > b: a, b = b, a
+    a, b = st.slider(
+        " ", 
+        min_value=0, 
+        max_value=int(max(sim)+3), 
+        value=st.session_state.interval_ab, 
+        key="interval_slider"
+    )
+    if a > b:
+        a, b = b, a
+    st.session_state.interval_ab = (a, b)
 
-    # Probabilité dans l’intervalle
     proba = sum(norm.cdf(k+0.5, mu, sigma) - norm.cdf(k-0.5, mu, sigma) for k in range(a, b+1))
 
     # ✅ Résultat mis en évidence
     st.markdown(f"""
         <div style="padding: 1rem; background-color: #e6f7ff; border-left: 6px solid #1890ff;">
-            <h3 style="margin: 0;">📦 P({a} ≤ score ≤ {b}) ≈ <strong>{proba:.2%}</strong></h3>
+            <h3 style="margin: 0; font-size: 1.5rem;">📦 P({a} ≤ score ≤ {b}) ≈ <strong>{proba:.2%}</strong></h3>
         </div>
     """, unsafe_allow_html=True)
 
