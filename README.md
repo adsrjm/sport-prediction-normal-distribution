@@ -114,9 +114,11 @@ Pour déployer la vôtre :
 
 ## 📧 Contact
 
-Projet réalisé par : **[Andy]** et **[Rijamampianina]**
+Projet réalisé par : 
+**[Ranaivo Nirina Andy Nantenaina, matricule 61 /M A]** et 
+**[Andriantsalama Rijamampianina]**
 
-📩 Contact : \[[andyranaivo861@gmail.com](mailto:andyranaivo861@gmail.com)]
+📩 Contact : \[[andyranaivo22@gmail.com](mailto:andyranaivo861@gmail.com)]
 📩 Contact : \[[rijamampianina@gmail.com](mailto:rijamampianina@gmail.com)]
 
 ---
